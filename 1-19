@@ -1,0 +1,105 @@
+#include "pch.h"
+#include <stdio.h>
+
+#define MAX_LIMIT 1000
+#define MAX_LINES 1000
+#define true 1
+#define false 0
+
+
+int getline(char[], int);
+void copy(char[], char[]);
+void clear(char[], int);
+void strip_string(char[], int*);
+void replacing_trailing_spaces(char[], int*);
+void reverse(char[], int);
+
+
+int main(void) {
+	char line[MAX_LIMIT], lines[MAX_LINES][MAX_LIMIT];
+	int  lines_length[MAX_LINES];
+	int counter = 0, line_length;
+	while ((line_length = getline(line, MAX_LIMIT)) > 0 && counter < MAX_LINES) {
+		strip_string(line, &line_length);
+		replacing_trailing_spaces(line, &line_length);
+		if (line_length) {
+			copy(line, lines[counter]);
+			lines_length[counter] = line_length;
+			counter++;
+		}
+	}
+	for (int i = 0; i < counter; i++) {
+		reverse(lines[i], lines_length[i]);
+		printf("The longest line entered[%d] -> Length[%d]: %s\n", i, lines_length[i], lines[i]);
+	}
+}
+
+void strip_string(char string[], int* string_length) {
+	int start_spaces_counter = 0, index = 0, temp_length = *string_length - 1;
+	while ((string[index] == ' ' || string[index] == '\t' || string[index] == '\n') && index < temp_length && string[index] != '\0') {
+		start_spaces_counter++;
+		index++;
+	}
+	while ((string[temp_length] == ' ' || string[temp_length] == '\t')) --temp_length;
+	for (int i = 0; i <= temp_length; i++) {
+		string[i] = string[start_spaces_counter + i];
+	}
+	string[++temp_length] = '\0';
+	*string_length = temp_length - start_spaces_counter;
+}
+
+void replacing_trailing_spaces(char string[], int* string_length) {
+	short starting_flag = false;
+	int space_length = 0, counter = 0, starting_pos = 0;
+	while (counter < *string_length && string[counter] != '\0') {
+		if (string[counter] != ' ' && string[counter] != '\t') {
+			if (starting_flag == true && space_length > 1) {
+				space_length -= 1;
+				counter -= space_length;
+				*string_length -= space_length;
+				for (int i = counter; i < *string_length; i++)
+					string[i] = string[i + space_length];
+				string[*string_length] = '\0';
+				starting_flag = false;
+				space_length = 0;
+			}
+			else { space_length = 0; }
+		}
+		else { starting_flag = true;  space_length++; }
+		counter++;
+	}
+}
+
+int getline(char storage[], int limit) {
+	int i = 0;
+	char c;
+	for (; (i < limit) && ((c = getchar()) != EOF); i++) {
+		storage[i] = c;
+		if (c == '\n')
+			break;
+	}
+	storage[i] = '\0';
+	return i;
+}
+
+void clear(char source[], int max_length) {
+	int i = 0;
+	for (; i <= max_length; i++) {
+		source[i] = '\0';
+	}
+}
+
+void reverse(char string[], int string_length) {
+	for (int i = 0; i < string_length / 2; i++){
+		char temp = string[i];
+		string[i] = string[string_length - (i + 1)];
+		string[string_length - (i + 1)] = temp;
+	}
+}
+
+void copy(char from[], char to[]) {
+	int i = 0;
+	while ((to[i] = from[i]) != '\0')
+		i++;
+	to[++i] = '\0';
+}
