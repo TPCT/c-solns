@@ -74,3 +74,19 @@ void reverse(char string[]){
         string[max_length - i] = temp;
     }
 }
+
+void itob(int number, char string[], unsigned short base){
+    short sign = false, i = 0, temp;
+    if (number < 0) sign = true, number = -number;
+    do{
+        temp = number % base;
+        if (base >= 0 && base <= 9){
+            string[i++] = temp + '0';
+        }else{
+            string[i++] = (temp >= 0 && temp <= 9) ? temp + '0' : temp - 10 + 'A';
+        }
+    }while(number /= base);
+    if (sign) string[i++] = '-';
+    string[i] = '\0';
+    reverse(string);
+}
