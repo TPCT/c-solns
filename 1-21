@@ -24,3 +24,6 @@ void squeeze(char string[], char replacement[]) {
 	}
 	string[j] = '\0';
 }
+unsigned setbits(unsigned x, int p, int n, unsigned y) {
+	return (x & ~(~(~0 << n) << p + 1 - n)) | ((y & ~(UINT_MAX << p + 1)) >> p + 1 - n) << p + 1 - n;
+}
