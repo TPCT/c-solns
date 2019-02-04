@@ -35,3 +35,19 @@ unsigned setbits(unsigned x, int p, int n, unsigned y) {
 unsigned invertbits(unsigned x, int n, int p) {
 	return setbits(x, n, p, ~x);
 }
+
+void expand(char string1[], char string2[]) {
+	int i = 0, j=0;
+	char c;
+	while ((c = string1[i++]) != '\0') {
+		if (string1[i] == '-' && string1[i + 1] >= c) {
+			i++;
+			while (c < string1[i])
+				string2[j++] = c++;
+		}
+		else {
+			string2[j++] = c;
+		}
+	}
+	string2[j] = '\0';
+}
