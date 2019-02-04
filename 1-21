@@ -53,13 +53,24 @@ void expand(char string1[], char string2[]) {
 }
 
 void itoa(int n, char string[]) {
-	int i = 0, sign=false;
-	if (n < 0)
-		sign = true, n = -n;
-	do {
-		string[i++] = n % 10 + '0';
-	} while ((n /= 10) > 0);
-	if (sign) string[i++] = -1;
-	string[i] = '\0';
-	reverse(string);
+    int i = 0, sign=false;
+    if (n < 0){
+        sign = true;
+        n = -n;
+    }
+    do {
+        string[i++] = n % 10 + '0';
+    } while ((n /= 10) > 0);
+    if (sign) string[i++] = '-';
+    string[i] = '\0';
+    reverse(string);
+}
+
+void reverse(char string[]){
+    int i, max_length;
+    for (i = 0, max_length = strlen(string) - 1; i <= max_length / 2; i++) {
+        int temp = string[i];
+        string[i] = string[max_length - i];
+        string[max_length - i] = temp;
+    }
 }
