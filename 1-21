@@ -1,0 +1,13 @@
+unsigned int htoi(const char hex[]) {
+	unsigned int number = 0;
+	int index = 0;
+	if (hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X')) index = 2;
+	while (((hex[index] >= '0' && hex[index] <= '9') || (hex[index] >= 'a' && hex[index] <= 'f') || (hex[index] >= 'A' && hex[index] <= 'F')) && (number < UINT_MAX)){
+		if (hex[index] >= '0' && hex[index] <= '9') { number = 16 * number + hex[index] - '0'; }
+		else if (hex[index] >= 'a' && hex[index] <= 'f') { number = 16 * number + (hex[index] - 'a' + 10); }
+		else if (hex[index] >= 'A' && hex[index] <= 'F') { number = 16 * number + (hex[index] - 'A' + 10); }
+		else return 0;
+		index++;
+	}
+	return number;
+}
