@@ -11,3 +11,16 @@ unsigned int htoi(const char hex[]) {
 	}
 	return number;
 }
+void squeeze(char string[], char replacement[]) {
+	int i = 0, j = 0;
+	for (; string[i] != '\0'; i++) {
+		for (int k = 0; replacement[k] != '\0'; k++) {
+			if (string[i] == replacement[k]) {
+				i++;
+				break;
+			}
+		}
+		string[j++] = string[i];
+	}
+	string[j] = '\0';
+}
