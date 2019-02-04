@@ -51,3 +51,15 @@ void expand(char string1[], char string2[]) {
 	}
 	string2[j] = '\0';
 }
+
+void itoa(int n, char string[]) {
+	int i = 0, sign=false;
+	if (n < 0)
+		sign = true, n = -n;
+	do {
+		string[i++] = n % 10 + '0';
+	} while ((n /= 10) > 0);
+	if (sign) string[i++] = -1;
+	string[i] = '\0';
+	reverse(string);
+}
