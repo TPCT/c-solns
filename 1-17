@@ -66,3 +66,18 @@ int strindex(char string[], char search[]) {
 	}
 	return -1;
 }
+
+int revstrindex(char string[], char search[]) {
+	int length = strlen(string), search_length = strlen(search), j, i;
+	short found = false;
+	for (i = length; i >= 0; i--) {
+		for (j = 0; (search[j] != '\0') && (i + j - search_length < length); j++) {
+			if (string[i - search_length + j] == search[j]) 
+				found = true;
+			else 
+				found = false;
+		}
+		if (found) return i - search_length + 1;
+	}
+	return -1;
+}
