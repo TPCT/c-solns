@@ -1,0 +1,199 @@
+#include "pch.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <math.h>
+#include <string.h>
+
+#define MAXOP 256
+#define MAXINPUT 2000
+#define NUMBER '0'
+#define false 0
+#define true 1
+
+short new_line = false, first_operator = false, assignment = false, retrive_from_stack = false;
+double numbers_stack[MAXINPUT], pop(void), variable_values[MAXINPUT];
+int numbers_stack_index = 0, variable_index = 0;
+char getop(void), indexer[256], variable_names[MAXINPUT][MAXOP], special_operators[] = {'*', '/', '+', '-', '?', '%', '=', '\0'};
+void push(double);
+
+int main(void) {
+	int type;
+	extern char indexer[256];
+	extern char variable_namees[MAXINPUT][MAXOP];
+	extern double variable_values[MAXINPUT], float_value;
+	extern int variable_index;
+	double pop2, pop1;
+	checker_lbl:
+		if (new_line) {
+			new_line = false;
+			goto new_line_lbl;
+		};
+	while ((type = getop()) != EOF) {
+		switch (type)
+		{
+		case NUMBER:
+			if (assignment)
+				variable_values[variable_index] = atof(indexer);
+			if (retrive_from_stack)
+				push(variable_values[variable_index]);
+			else
+				push(atof(indexer));
+			retrive_from_stack = false;
+			assignment = false;
+			break;
+		case '+':
+			push(pop() + pop());
+			goto checker_lbl;
+			break;
+		case '*':
+			push(pop() * pop());
+			goto checker_lbl;
+			break;
+		case '-':
+			pop2 = pop();
+			push(pop() - pop2);
+			goto checker_lbl;
+			break;
+		case '?':
+			pop2 = pop();
+			push(pop2);
+			goto checker_lbl;
+			break;
+		case 0x2:
+			while (numbers_stack_index)
+				pop();
+			goto checker_lbl;
+			break;
+		case 0x3:
+			pop2 = pop();
+			push(pop2);
+			push(pop2);
+			goto checker_lbl;
+			break;
+		case 0x1:
+			pop2 = pop();
+			pop1 = pop();
+			push(pop2);
+			push(pop1);
+			goto checker_lbl;
+			break;
+		case 0xf:
+			pop2 = pop();
+			push(pow(pop(), pop2));
+			goto checker_lbl;
+			break;
+		case 0xe:
+			push(exp(pop()));
+			goto checker_lbl;
+			break;
+		case 0xd:
+			push(sin(pop()));
+			goto checker_lbl;
+			break;
+		case '%':
+			pop2 = pop();
+			push((int)pop() % (int)pop2);
+			goto checker_lbl;
+			break;
+		case '/':
+			pop2 = pop();
+			if (pop2 != 0)
+				push(pop() / pop2);
+			else
+				printf("Error: division by zero");
+			goto checker_lbl;
+			break;
+		case '\n':
+			new_line_lbl:
+			if (numbers_stack_index)
+				printf("The Result Of Rrevious Calculation: %.8g\n", pop());
+			else
+				pop();
+			break;
+		default:
+			printf("Error: unkown command\n");
+			break;
+		}
+	}
+
+}
+
+void push(double number) {
+	extern double numbers_stack[MAXINPUT];
+	extern int numbers_stack_index;
+	if (numbers_stack_index < MAXINPUT)
+		numbers_stack[numbers_stack_index++] = number;
+	else
+		printf("Error: Stack is full cannot push more values\n");
+}
+
+double pop(void) {
+	extern double numbers_stack[MAXINPUT];
+	extern int numbers_stack_index;
+	if (numbers_stack_index > 0) {
+		numbers_stack[numbers_stack_index--] = '\0';
+		return numbers_stack[numbers_stack_index];
+	}
+	else {
+		printf("Error: Stack is empty cannot pop more values\n");
+	}
+	return 0.0;
+}
+
+char getop(void) {
+	main_lbl:
+	extern char indexer[256], special_operators[], variable_names[][MAXOP];
+	extern double variable_values[MAXINPUT], float_value;
+	char order[256];
+	char c;
+	int i = 0, j = 0;
+	extern int variable_index;
+	while ((c = getchar()) == ' ' || c == '\t');
+	if (!isdigit(c) && c != '.' && c != '-') {
+		order[j++] = c;
+		while ((c = getchar()) != ' ' && c != '\t' && c != '\n')
+			order[j++] = c;
+		order[j] = '\0';
+		if (c == '\n')
+			new_line = true;
+		if (!strcmp(order, "pow") || !strcmp(order, "power") || !strcmp(order, "**")) return 0xf;
+		if (!strcmp(order, "exp") || !strcmp(order, "exponent") || !strcmp(order, "e")) return 0xe;
+		if (!strcmp(order, "sin")) return 0xd;
+		if (!strcmp(order, "clear")) return 0x2;
+		if (!strcmp(order, "swap")) return 0x1;
+		if (!strcmp(order, "duplicate")) return 0x3;
+		if (j == 1)
+			for (int k = 0; special_operators[k] != '\0'; k++) {
+				if (order[0] == special_operators[k]) {
+					if (order[0] == '=') { assignment = true; goto main_lbl;}
+					else return special_operators[k];
+				}
+			}
+		for (int l = 0; l < variable_index; l++) {
+			if (!strcmp(variable_names[l], order)) {
+				retrive_from_stack = true;
+				return NUMBER;
+			}
+		}
+		strcpy_s(variable_names[variable_index++], order);
+		goto main_lbl;
+	}
+	else if (c == '-') {
+		indexer[i++] = c;
+		while (isdigit(c = getchar()))
+			indexer[i++] = c;
+	}
+	else if (isdigit(c)) {
+		indexer[i++] = c;
+		while (isdigit(c = getchar()))
+			indexer[i++] = c;
+	}
+	else if (c == '.') {
+		indexer[i++] = c;
+		while (isdigit(c = getchar()))
+			indexer[i++] = c;
+	}
+	indexer[i] = '\0';
+	return NUMBER;
+}
