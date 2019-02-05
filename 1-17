@@ -83,11 +83,11 @@ int revstrindex(char string[], char search[]) {
 }
 
 double atof(char string[]) {
-	int i = 0, sign = 1, power = 1.0;
-	double number = 0;
+	int i = 0, sign = 1;
+	double number = 0, power = 1.0;
 	for (; string[i] != 0; i++);
 	if (string[i] == '-') sign = -1;
-	for (; isdigit(string[i); i++)
+	for (; isdigit(string[i]); i++)
 		number = 10 * number + (string[i] - '0');
 	if (string[i] == '.')
 		i++;
@@ -95,5 +95,12 @@ double atof(char string[]) {
 		power *= 10.0;
 		number = 10 * number + (string[i] - '0');
 	}
-	return sign * number / power;
+	number = sign * number / power;
+	while (string[i] != '\0') {
+		if (string[i] == 'E' || string[i] == 'e') i++;
+		else if (string[i] == '-') sign = -1, i++, number *= power;
+		else if (isdigit(string[i])) power = 10 * power + string[i] - '0', i++;
+		else break;
+	}
+	return pow(number, sign * power);
 }
