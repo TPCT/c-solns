@@ -51,3 +51,18 @@ void copy(char from[], char to[]) {
 		i++;
 	to[++i] = '\0';
 }
+
+int strindex(char string[], char search[]) {
+	int i = 0, length = strlen(string);
+	short found = false;
+	for (; string[i] != '\0'; i++) {
+		for (int j = 0; (search[j] != '\0') && ((i+j) < length); j++) {
+			if (string[i + j] == search[j]) 
+				found = true;
+			else 
+				found = false;
+		}
+		if (found) return i;
+	}
+	return -1;
+}
