@@ -90,3 +90,18 @@ void itob(int number, char string[], unsigned short base){
     string[i] = '\0';
     reverse(string);
 }
+
+void qsort(int array[], int left, int right) {
+	int counter = 0;
+	void swap(int[], int, int);
+	if (left >= right)
+		return;
+	for (int j = 0; j <= right; j++) {
+		if (array[j] < array[right]) {
+			swap(array, counter++, j);
+		}
+	}
+	swap(array, counter, right);
+	qsort(array, 0, counter - 1);
+	qsort(array, counter + 1, right);
+}
